@@ -1,0 +1,178 @@
+<script type="module">
+  import kaboom from "https://unpkg.com/kaboom@3000.0.1/dist/kaboom.mjs";
+
+  kaboom({
+    width: 869,
+    height: 669,
+    scale: 1,
+    font: "sans-serif",
+    background: [ 51, 151, 255 ],
+    });
+  
+  // console.log(width(), height())
+  loadSprite("bird", "https://raw.githubusercontent.com/sahopkin/Kaboom_Flappy_Bird_Game/main/game_sprites/bird.png");
+  loadSprite("sad", "https://raw.githubusercontent.com/sahopkin/Kaboom_Flappy_Bird_Game/main/game_sprites/sad.png");
+  loadSprite("cloud", "https://raw.githubusercontent.com/sahopkin/Kaboom_Flappy_Bird_Game/main/game_sprites/cloud.png");
+
+  const FLOOR_HEIGHT = 48;
+  const JUMP_FORCE = 750;
+  const SPEED = 300;
+  const PIPE_GAP = 300;
+
+  scene("game", () => {
+    
+    //user interface layer (for score)
+    const ui = add([
+      fixed(),
+      z(100),
+    ]);
+
+    //background layer (for clouds)
+    const bg = add([
+      fixed(),
+      z(0),
+    ]);
+
+    setGravity(1600);
+
+    //CREATES THE GROUND FOR THE GAME
+    add([
+      rect(width(), FLOOR_HEIGHT),  //full screen width by height = to FLOOR_HEIGHT
+      outline(4),
+      pos(0, height()),             //places the rectangle at the bottom of the screen
+      anchor("botleft"),            //make the bottom left corner the point of origin so all of the rectangle is displayed
+      area(),                       //gives the rectangle collision boundaries
+      body({ isStatic: true }),     //makes the rectangle solid so other game objects with the body property can't fall through the rectangle
+      color(0, 200, 0)
+    ])
+
+    function spawnCloud() {
+      bg.add([
+        sprite('cloud'),
+        pos(width(), rand(0, height() - 300)),    //cloud is placed at a random height each time it is generated
+        area(),
+        scale(2),
+        move(LEFT, SPEED-100)
+      ])
+
+      wait(1.5, spawnCloud);                      //clouds are generated ever 1.5 seconds
+    }
+
+    spawnCloud();                                 //calls the spawnCloud function
+
+
+    function spawnPipe() {
+      const HEIGHTOFPIPE = rand(50, 400)          //pipe height is between 50 and 400px
+
+      //Top pipes
+      add([     
+        rect(90, height()),
+        area(),
+        outline(4),
+        pos(width(), height() - FLOOR_HEIGHT - HEIGHTOFPIPE - PIPE_GAP),    //Moves pipe to the top of the screen and accounts for heigh to floor and gap between pipes
+        anchor("botleft"),
+        color(255, 180, 255),
+        move(LEFT, SPEED),
+        "tree"
+      ])
+
+      //Bottom pipes
+      add([
+        rect(90, HEIGHTOFPIPE),
+        area(),
+        outline(4),
+        pos(width(), height() - FLOOR_HEIGHT),
+        anchor("botleft"),
+        color(255, 180, 255),
+        move(LEFT, SPEED),
+        "tree"
+      ])
+
+      wait(1.5, spawnPipe)     //The waitTime value will decrease by 0.5 seconds each time the score reaches a multiple of 10
+    }
+
+    spawnPipe()
+
+
+    const player = add([
+      sprite('bird'),
+      pos(200, 40),
+      area(),
+      body()
+    ])
+
+    onKeyPress('space', () => {
+      player.jump(JUMP_FORCE)
+    })
+
+    player.onCollide("tree", () => {
+      go("lose", score);
+    })
+
+    let score = 0
+    let frames = 0
+    let scoreSpeed = 20
+
+    const scoreLabel = ui.add([
+      text(score),
+      scale(2),
+      pos((width() / 2) - 30, 100),
+      color(0, 0, 0)
+    ])
+
+    onUpdate(() => {
+      frames++
+      if ( frames % scoreSpeed == 0 ) {   //if scoreSpeed is set to 30, the score updates every 1 second
+        score++
+        scoreLabel.text = score
+      }
+    })
+
+
+  });
+
+
+  scene("lose", (score) => {
+
+    add([
+      sprite("sad"),
+      pos(width() / 2, (height() / 2) - 80),
+      scale(2),
+      anchor("center")
+    ])
+
+    add([
+      text(score),
+      pos(width() / 2, (height() / 2) + 80),
+      scale(2),
+      anchor("center"),
+      color(0, 0, 0)
+    ])
+
+    add([
+      text("Game over"),
+      pos(width() / 2, (height() / 2) - 200),
+      scale(2),
+      anchor("center"),
+      color(0, 0, 0)
+    ])
+
+    add([
+      text('Press the "Z" key to restart the game'),
+      pos(width() / 2, (height() / 2) + 200),
+      anchor("center"),
+      color(255, 255, 255)
+    ])
+
+    onKeyPress("z", () => {
+      go("game")
+    })
+
+  });
+
+
+
+  go("game")
+
+
+</script>
