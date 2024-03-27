@@ -10,4 +10,4 @@ The game is built using Google Apps Script and deployed as a WebApp. In order to
   
 The Kaboom code is all written within the js.html file. Sprites for the game are located in the Game_Sprites folder.  All code is derived and modified based on the [Medium article](https://medium.com/@mithileshpatel/flying-jack-my-first-game-in-kaboom-js-f84dfbda4290) written by Mithilesh Kr. Patel
 
-Link to playable version of the game: Kaboom Space Invaders Game v3
+Link to playable version of the game: [Kaboom Flappy Bird Game v3](https://script.google.com/a/macros/eagleschools.net/s/AKfycby3dOHIKMRqLr5_AyjVX1D4dO6SJd6qLGZVA-HSl8FJYK3ex0utcm301HMvtlY9Z44-Ng/exec)
