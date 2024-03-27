@@ -1,4 +1,4 @@
-# Kaboom_Flappy_Bird_Game
+# Kaboom Flappy Bird_Game
 This repository contains the sprites and scripts to build a variation of Flappy Bird using Kaboom.Js v3000
 
 The game is built using Google Apps Script and deployed as a WebApp. In order to do so, 4 files are created:
